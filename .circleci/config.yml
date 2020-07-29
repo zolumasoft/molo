@@ -1,21 +1,20 @@
 version: 2.1
-
-orbs:
-  python: circleci/python@0.2.1
-
 jobs:
-  build-and-test:
-    executor: python/default
+  build:
+    docker:
+      - image: circleci/python:3.7.8
     steps:
       - checkout
-      - python/load-cache
-      - python/install-deps
-      - python/save-cache
-      - run:
-          command: ./manage.py test
-          name: Test
+      - run: 
+          command: |
+            python3 -m venv venv
+            . venv/bin/activate
+            make install
 
-workflows:
-  main:
-    jobs:
-      - build-and-test
+      - run:
+          name: run lint
+          command: |
+            . venv/bin/activate
+            make lint
+
+
